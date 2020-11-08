@@ -8,7 +8,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-public class SecureConfigurationClientTest {
+public class SafeConfigurationClientTest {
 
     @Test
     public void readSecrets() {

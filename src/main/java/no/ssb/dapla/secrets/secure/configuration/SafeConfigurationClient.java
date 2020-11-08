@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SecureConfigurationClient implements SecretManagerClient {
+public class SafeConfigurationClient implements SecretManagerClient {
 
     private final Map<String, byte[]> secureMap = new LinkedHashMap<>();
     private final AtomicBoolean closed = new AtomicBoolean();
 
-    public SecureConfigurationClient(String propertyResourcePath) {
+    public SafeConfigurationClient(String propertyResourcePath) {
         Objects.requireNonNull(propertyResourcePath);
         Path resourcePath = Paths.get(propertyResourcePath);
         if (!Files.isReadable(resourcePath)) {

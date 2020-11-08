@@ -7,12 +7,12 @@ import no.ssb.service.provider.api.ProviderName;
 import java.util.Map;
 import java.util.Set;
 
-@ProviderName("secure-configuration")
-public class SecureConfigurationClientInitializer implements SecretManagerClientInitializer {
+@ProviderName("safe-configuration")
+public class SafeConfigurationClientInitializer implements SecretManagerClientInitializer {
 
     @Override
     public String providerId() {
-        return "secure-configuration";
+        return "safe-configuration";
     }
 
     @Override
@@ -23,6 +23,6 @@ public class SecureConfigurationClientInitializer implements SecretManagerClient
     @Override
     public SecretManagerClient initialize(Map<String, String> configuration) {
         String propertyResourcePath = configuration.get("secrets.propertyResourcePath");
-        return new SecureConfigurationClient(propertyResourcePath);
+        return new SafeConfigurationClient(propertyResourcePath);
     }
 }
