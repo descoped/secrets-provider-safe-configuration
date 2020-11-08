@@ -13,7 +13,7 @@ public class SafeConfigurationClientTest {
     @Test
     public void readSecrets() {
         Map<String, String> providerConfiguration = Map.of(
-                "secrets.provider", "secure-configuration",
+                "secrets.provider", "safe-configuration",
                 "secrets.propertyResourcePath", Paths.get(".").toAbsolutePath().normalize().resolve(Paths.get("src/test/resources/secret.properties")).toString()
         );
 
@@ -27,7 +27,7 @@ public class SafeConfigurationClientTest {
     @Test
     public void readDosFileSecrets() {
         Map<String, String> providerConfiguration = Map.of(
-                "secrets.provider", "secure-configuration",
+                "secrets.provider", "safe-configuration",
                 "secrets.propertyResourcePath", Paths.get(".").toAbsolutePath().normalize().resolve(Paths.get("src/test/resources/secret-dos.properties")).toString()
         );
 
