@@ -1,0 +1,1 @@
+# dapla-secrets-provider-secure-configuration
