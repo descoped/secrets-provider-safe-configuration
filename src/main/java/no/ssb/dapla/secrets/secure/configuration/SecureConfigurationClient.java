@@ -39,53 +39,86 @@ public class SecureConfigurationClient implements SecretManagerClient {
             buffer.get(chars);
             buffer.clear();
 
-            int startPos = 0;
-            int equalPos = -1;
-            int newLinePos;
+            int pos = 0;
 
-            for (int n = 0; n < chars.length; n++) {
-                if (equalPos == -1 && chars[n] == '=') {
-                    equalPos = n;
+            while (pos < chars.length) {
+                Map.Entry<Integer, Integer> endOfLIne = findEndOfLine(chars, pos);
 
-                } else if (chars[n] == '\n') {
-                    newLinePos = n;
-
-                    // check if next char is \r
-                    if (n + 1 < chars.length && chars[n + 1] == '\r') {
-                        n++;
-                    }
-
-                    // split line
-                    if (equalPos == -1) {
-                        throw new RuntimeException("Line did not contain '='!");
-                    }
-
-                    char[] value = new char[0];
-                    CharBuffer valueBuffer = null;
-                    ByteBuffer valueByteBuffer = null;
-                    try {
-                        String key = new String(chars, startPos, equalPos - startPos);
-                        value = Arrays.copyOfRange(chars, equalPos + 1, newLinePos);
-                        valueBuffer = CharBuffer.wrap(value);
-                        valueByteBuffer = StandardCharsets.UTF_8.encode(valueBuffer);
-                        byte[] valueBytes = new byte[valueByteBuffer.remaining()];
-                        valueByteBuffer.get(valueBytes);
-                        secureMap.put(key, valueBytes);
-                    } finally {
-                        if (valueBuffer != null) valueBuffer.clear();
-                        if (valueByteBuffer != null) valueByteBuffer.clear();
-                        Arrays.fill(value, (char) 0);
-                    }
-
-                    startPos = newLinePos + 1;
-                    equalPos = -1;
+                // skip comment lines
+                if (chars[pos] == '#') {
+                    pos = endOfLIne.getValue() + 1;
+                    continue;
                 }
+
+                // split property pair
+                int equalPos = findEqualCharacter(chars, pos);
+                if (equalPos == -1) {
+                    pos = endOfLIne.getValue() + 1;
+                    continue;
+                }
+                if (equalPos > endOfLIne.getValue()) {
+                    pos = endOfLIne.getValue() + 1;
+                    continue;
+                }
+                char[] value = new char[0];
+                CharBuffer valueCharBuffer = null;
+                ByteBuffer valueByteBuffer = null;
+                try {
+                    String key = new String(chars, pos, equalPos - pos);
+                    value = Arrays.copyOfRange(chars, equalPos + 1, endOfLIne.getKey());
+                    valueCharBuffer = CharBuffer.wrap(value);
+                    valueByteBuffer = StandardCharsets.UTF_8.encode(valueCharBuffer);
+                    byte[] valueBytes = new byte[valueByteBuffer.remaining()];
+                    valueByteBuffer.get(valueBytes);
+                    secureMap.put(key, valueBytes);
+                } finally {
+                    if (valueCharBuffer != null) valueCharBuffer.clear();
+                    if (valueByteBuffer != null) valueByteBuffer.clear();
+                    Arrays.fill(value, '\u0000');
+                }
+
+                pos = (endOfLIne.getValue() < chars.length && chars[endOfLIne.getValue()] == '\n') ? endOfLIne.getValue() + 1 : endOfLIne.getValue();
             }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
             Arrays.fill(bytes, (byte) 0);
-            Arrays.fill(chars, (char) 0);
+            Arrays.fill(chars, '\u0000');
+        }
+    }
+
+    private Integer findEqualCharacter(char[] chars, int pos) {
+        for (int i = pos; i < chars.length; i++) {
+            if (chars[i] == '=') {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private Map.Entry<Integer, Integer> findEndOfLine(char[] chars, int pos) {
+        int cr = -1; // \r
+        int lf = -1; // \n
+
+        for (int i = pos; i < chars.length; i++) {
+            if (chars[i] == '\n') {
+                lf = i;
+                if ((i - 1 > -1) && (chars[i - 1] == '\r')) {
+                    cr = i - 1;
+                }
+                break;
+            }
+        }
+
+        if (cr > -1) {
+            return Map.entry(cr, lf);
+
+        } else if (lf == -1) {
+            return Map.entry(chars.length, chars.length);
+
+        } else {
+            return Map.entry(lf, lf);
         }
     }
 
