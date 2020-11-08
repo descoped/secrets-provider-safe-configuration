@@ -44,7 +44,7 @@ public class SecureConfigurationClient implements SecretManagerClient {
             int newLinePos;
 
             for (int n = 0; n < chars.length; n++) {
-                if (chars[n] == '=') {
+                if (equalPos == -1 && chars[n] == '=') {
                     equalPos = n;
 
                 } else if (chars[n] == '\n') {
