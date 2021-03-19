@@ -123,21 +123,12 @@ public class SafeConfigurationClient implements SecretManagerClient {
     }
 
     @Override
-    public String readString(String secretName) {
-        return readString(secretName, null);
-    }
-
-    @Override
-    public String readString(String secretName, String secretVersion) {
+    public String addVersion(String secretName, byte[] secretValue) {
         if (closed.get()) {
             throw new IllegalStateException("Client is closed!");
         }
-        return secureMap.containsKey(secretName) ? new String(secureMap.get(secretName), StandardCharsets.UTF_8) : null;
-    }
-
-    @Override
-    public byte[] readBytes(String secretName) {
-        return readBytes(secretName, null);
+        secureMap.put(secretName, secretValue);
+        return "latest";
     }
 
     @Override
