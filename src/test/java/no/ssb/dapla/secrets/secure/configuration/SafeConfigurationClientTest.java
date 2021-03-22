@@ -3,8 +3,12 @@ package no.ssb.dapla.secrets.secure.configuration;
 import no.ssb.dapla.secrets.api.SecretManagerClient;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -41,10 +45,12 @@ public class SafeConfigurationClientTest {
     }
 
     @Test
-    public void writeThenReadSecret() {
+    public void writeThenReadSecret() throws IOException {
+        Files.copy(Path.of("src/test/resources/secret.properties"), Path.of("/tmp/application-secret.properties"), StandardCopyOption.REPLACE_EXISTING);
+
         Map<String, String> providerConfiguration = Map.of(
                 "secrets.provider", "safe-configuration",
-                "secrets.propertyResourcePath", Paths.get(".").toAbsolutePath().normalize().resolve(Paths.get("src/test/resources/secret-dos.properties")).toString()
+                "secrets.propertyResourcePath", "/tmp/application-secret.properties"
         );
 
         try (SecretManagerClient client = SecretManagerClient.create(providerConfiguration)) {

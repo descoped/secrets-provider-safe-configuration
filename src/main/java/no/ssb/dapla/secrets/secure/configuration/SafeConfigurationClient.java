@@ -1,8 +1,12 @@
 package no.ssb.dapla.secrets.secure.configuration;
 
 import no.ssb.dapla.secrets.api.SecretManagerClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
@@ -13,16 +17,20 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SafeConfigurationClient implements SecretManagerClient {
 
+    static final Logger LOG = LoggerFactory.getLogger(SafeConfigurationClient.class);
     private final Map<String, byte[]> secureMap = new LinkedHashMap<>();
+    private final Path resourcePath;
+    private final Object lock = new Object();
     private final AtomicBoolean closed = new AtomicBoolean();
 
     public SafeConfigurationClient(String propertyResourcePath) {
         Objects.requireNonNull(propertyResourcePath);
-        Path resourcePath = Paths.get(propertyResourcePath);
+        resourcePath = Paths.get(propertyResourcePath);
         if (!Files.isReadable(resourcePath)) {
             throw new RuntimeException("The file " + propertyResourcePath + " is not readable");
         }
@@ -128,6 +136,23 @@ public class SafeConfigurationClient implements SecretManagerClient {
             throw new IllegalStateException("Client is closed!");
         }
         secureMap.put(secretName, secretValue);
+        if (!Files.isWritable(resourcePath)) {
+            LOG.warn("Secret configuration is NOT writable: {}", resourcePath.normalize().toAbsolutePath());
+            return "latest";
+        }
+        synchronized (lock) {
+            try {
+                String secretResources = Files.readString(resourcePath);
+                Properties props = new Properties();
+                props.load(new StringReader(secretResources));
+                props.put(secretName, new String(secretValue, StandardCharsets.UTF_8));
+                try (FileOutputStream out = new FileOutputStream(resourcePath.toFile())) {
+                    props.store(out, null);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return "latest";
     }
 
