@@ -4,7 +4,7 @@
 
     <groupId>no.ssb.dapla.secrets</groupId>
     <artifactId>dapla-secrets-provider-safe-configuration</artifactId>
-    <version>0.6.0-SNAPSHOT</version>
+    <version>0.6.0</version>
     <packaging>jar</packaging>
 
     <name>Dapla Secrets Provider Safe Configuration</name>
@@ -40,7 +40,7 @@
         <developerConnection>scm:git:git@github.com:statisticsnorway/dapla-secrets-provider-safe-configuration.git
         </developerConnection>
         <url>https://github.com/statisticsnorway/dapla-secrets-provider-safe-configuration/tree/master</url>
-        <tag>HEAD</tag>
+        <tag>dapla-secrets-provider-safe-configuration-0.6.0</tag>
     </scm>
 
     <dependencies>
