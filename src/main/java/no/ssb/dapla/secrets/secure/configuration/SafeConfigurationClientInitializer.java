@@ -17,12 +17,12 @@ public class SafeConfigurationClientInitializer implements SecretManagerClientIn
 
     @Override
     public Set<String> configurationKeys() {
-        return Set.of("secrets.propertyResourcePath");
+        return Set.of("secrets.property-resource-path");
     }
 
     @Override
     public SecretManagerClient initialize(Map<String, String> configuration) {
-        String propertyResourcePath = configuration.get("secrets.propertyResourcePath");
+        String propertyResourcePath = configuration.get("secrets.property-resource-path");
         return new SafeConfigurationClient(propertyResourcePath);
     }
 }

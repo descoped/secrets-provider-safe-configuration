@@ -20,7 +20,7 @@ public class SafeConfigurationClientTest {
     public void readSecrets() {
         Map<String, String> providerConfiguration = Map.of(
                 "secrets.provider", "safe-configuration",
-                "secrets.propertyResourcePath", Paths.get(".").toAbsolutePath().normalize().resolve(Paths.get("src/test/resources/secret.properties")).toString()
+                "secrets.property-resource-path", Paths.get(".").toAbsolutePath().normalize().resolve(Paths.get("src/test/resources/secret.properties")).toString()
         );
 
         try (SecretManagerClient client = SecretManagerClient.create(providerConfiguration)) {
@@ -34,7 +34,7 @@ public class SafeConfigurationClientTest {
     public void readDosFileSecrets() {
         Map<String, String> providerConfiguration = Map.of(
                 "secrets.provider", "safe-configuration",
-                "secrets.propertyResourcePath", Paths.get(".").toAbsolutePath().normalize().resolve(Paths.get("src/test/resources/secret-dos.properties")).toString()
+                "secrets.property-resource-path", Paths.get(".").toAbsolutePath().normalize().resolve(Paths.get("src/test/resources/secret-dos.properties")).toString()
         );
 
         try (SecretManagerClient client = SecretManagerClient.create(providerConfiguration)) {
@@ -50,7 +50,7 @@ public class SafeConfigurationClientTest {
 
         Map<String, String> providerConfiguration = Map.of(
                 "secrets.provider", "safe-configuration",
-                "secrets.propertyResourcePath", "/tmp/application-secret.properties"
+                "secrets.property-resource-path", "/tmp/application-secret.properties"
         );
 
         try (SecretManagerClient client = SecretManagerClient.create(providerConfiguration)) {
