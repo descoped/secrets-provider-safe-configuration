@@ -1,6 +1,6 @@
-package no.ssb.dapla.secrets.secure.configuration;
+package io.descoped.secrets.secure.configuration;
 
-import no.ssb.dapla.secrets.api.SecretManagerClient;
+import io.descoped.secrets.api.SecretManagerClient;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
