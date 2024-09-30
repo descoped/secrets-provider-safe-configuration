@@ -1,14 +1,13 @@
 import no.ssb.dapla.secrets.api.SecretManagerClientInitializer;
-import no.ssb.dapla.secrets.secure.configuration.SafeConfigurationClientInitializer;
 
-module dapla.secrets.provider.safe.configuration {
+module secrets.provider.safe.configuration {
 
-    requires no.ssb.service.provider.api;
-    requires dapla.secrets.client.api;
+    requires io.descoped.service.provider.api;
+    requires secrets.client.api;
 
     requires org.slf4j;
 
-    provides SecretManagerClientInitializer with SafeConfigurationClientInitializer;
+    provides SecretManagerClientInitializer with no.ssb.dapla.secrets.secure.configuration.SafeConfigurationClientInitializer;
 
     exports no.ssb.dapla.secrets.secure.configuration;
 
